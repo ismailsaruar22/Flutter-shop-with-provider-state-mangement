@@ -31,8 +31,16 @@ class ProdcutDetailsScreen extends StatelessWidget {
                 fontWeight: FontWeight.w900,
                 color: Colors.pink.shade900),
           ),
-          Container(
-            child: Image.network(loadedProduct.imageUrl),
+          SizedBox(
+            height: 400,
+            width: 600,
+            child: Center(
+              child: Image.network(
+                loadedProduct.imageUrl,
+                fit: BoxFit.cover,
+                alignment: Alignment.center,
+              ),
+            ),
           ),
           const SizedBox(
             height: 10,

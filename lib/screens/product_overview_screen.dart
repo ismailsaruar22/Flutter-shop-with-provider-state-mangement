@@ -4,6 +4,7 @@ import 'package:flutter_shop_app_with_provider/widgets/app_drawer.dart';
 import 'package:flutter_shop_app_with_provider/widgets/badge.dart';
 import 'package:provider/provider.dart';
 
+import '../providers/products.dart';
 import '../widgets/products_gridview.dart';
 import '../providers/cart.dart';
 
@@ -19,6 +20,34 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   var _showOnlyFavorite = false;
+  var _isInIt = true;
+  var _isLoading = false;
+
+  @override
+  void initState() {
+    // context can't be assigned in inIt state. So this an alternative way of useing
+    //context in inIt state.But the condition is it will only work when listen: false
+    // So its better to use didChangeDependencies for this purpose.
+
+    // Future.delayed(Duration.zero).then((value) =>
+    //     Provider.of<Products>(context, listen: false).fetchProducts());
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (_isInIt) {
+      _isLoading = true;
+      Provider.of<Products>(context).fetchProducts().then((_) {
+        setState(() {
+          _isLoading = false;
+        });
+      });
+    }
+    _isInIt = false;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     //final productContainer = Provider.of<Products>(context, listen: false);
@@ -64,7 +93,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: ProductsGridview(_showOnlyFavorite),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ProductsGridview(_showOnlyFavorite),
     );
   }
 }
